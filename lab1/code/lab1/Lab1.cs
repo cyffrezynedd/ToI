@@ -21,11 +21,11 @@ namespace lab1
 
         private string Action { get; set; }
 
-        private bool isInputClear { get => setStatus(textBox1.Text); set => setStatus(textBox1.Text); }
-        private bool isKeyMainClear { get => setStatus(keyFieldMain.Text); set => setStatus(keyFieldMain.Text); }
-        private bool isKeyExtraClear { get => setStatus(keyFieldExtra.Text); set => setStatus(keyFieldExtra.Text); }
+        private bool isInputClear { get => getStatus(textBox1.Text); }
+        private bool isKeyMainClear { get => getStatus(keyFieldMain.Text); }
+        private bool isKeyExtraClear { get => getStatus(keyFieldExtra.Text); }
 
-        private bool setStatus(string text)
+        private bool getStatus(string text)
         {   
             return text == "";
         }
