@@ -161,6 +161,7 @@ namespace lab2
 
         private void tb_KeyChanged(object sender, EventArgs e)
         {
+            tbResultKey.Text = "";
             short count = 0;
 
             for(short i = 0; i < tbInitKey.Text.Length; i++)
@@ -181,10 +182,6 @@ namespace lab2
                 || e.KeyChar != '0' && e.KeyChar != '1' && e.KeyChar != '\b' && e.KeyChar != 26 && e.KeyChar != 3)
             {
                 e.KeyChar = '\0';
-            }
-            if (e.KeyChar != 3)
-            {
-                tbResultKey.Text = "";
             }
         }
     }
