@@ -87,12 +87,13 @@ namespace lab2
                 LastExtension = buffer.Substring(1,buffer.Length - 1);
 
                 fileBytes = File.ReadAllBytes(openFileDialog1.FileName);
+                Logic.ReverseBytes(ref fileBytes);
 
-                Logic.InitialText = (byte[])fileBytes.Clone();
+                Logic.InitialText = new BitArray(fileBytes);
 
                 try
                 {
-                    await Logic.showBits(tbInitText, new BitArray(fileBytes));
+                    await Logic.showBits(tbInitText, Logic.InitialText);
                 }
                 catch (Exception ex)
                 {
@@ -123,7 +124,7 @@ namespace lab2
             {
                 try
                 {
-                    File.WriteAllBytes(saveFileDialog1.FileName, Logic.ResultText);
+                    File.WriteAllBytes(saveFileDialog1.FileName, Logic.ResultTextBytes);
                 }
                 catch (Exception ex)
                 {
@@ -140,7 +141,7 @@ namespace lab2
         private async void btn_Execute(object sender, EventArgs e)
         {
             Logic.generateResult();
-            await Logic.showBits(tbResultText, new BitArray(Logic.ResultText));
+            await Logic.showBits(tbResultText, Logic.ResultTextBits);
         }
 
         private async void btn_GenKey(object sender, EventArgs e)

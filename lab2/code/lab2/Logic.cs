@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
 
 internal static class Logic
 {
@@ -83,6 +86,11 @@ internal static class Logic
             });
         });
     }
+    private static byte ReverseBits(byte b)
+    {
+        return (byte)(((b * 0x80200802UL) & 0x0884422110UL) * 0x0101010101UL >> 32);
+    }
+
     internal static async Task showBits(TextBox textBox, BitArray bits)
     {
         if (bits.Length > 30000)
@@ -94,6 +102,14 @@ internal static class Logic
         await showFullBits(textBox, bits);
     }
 
+    internal static void ReverseBytes(ref byte[] data)
+    {
+        for (int i = 0; i < data.Length; i++)
+        {
+            data[i] = ReverseBits(data[i]);
+        }
+    }
+
     internal static void generateKey(string key)
     {
         bool shiftedBit, extraShiftedBit, xorResult;
@@ -102,7 +118,7 @@ internal static class Logic
 
         byte[] registerBytes = new byte[8];
 
-        int length = InitialText.Length * BIT_IN_BYTE;
+        int length = InitialText.Length;
 
         BitArray initState = new BitArray(64);
         BitArray resultKey = new BitArray(length);
@@ -133,11 +149,10 @@ internal static class Logic
 
     internal static void generateResult()
     {
-        BitArray text = new BitArray(InitialText);
-        BitArray result = new BitArray(text.Length);
+        BitArray result = new BitArray(InitialText.Length);
 
         int batchSize = 64;
-        int numBatches = text.Length / batchSize;
+        int numBatches = InitialText.Length / batchSize;
 
         var options = new ParallelOptions
         {
@@ -149,17 +164,20 @@ internal static class Logic
         Parallel.For(0, numBatches + 1, options, id =>
         {
             int start = id * batchSize;
-            int end = Math.Min(start + batchSize, text.Length);
+            int end = Math.Min(start + batchSize, InitialText.Length);
 
             for (int i  = start; i < end; i++)
             {
-                result[i] = text[i] ^ Key[i];
+                result[i] = InitialText[i] ^ Key[i];
             }
         }
         );
 
-        ResultText = new byte[result.Length / 8];
-        result.CopyTo(ResultText, 0);
+        ResultTextBytes = new byte[result.Length / 8];
+        result.CopyTo( ResultTextBytes, 0);
+        ReverseBytes(ref ResultTextBytes);
+
+        ResultTextBits = result;
     }
 
     internal static void handleError(string message)
@@ -169,8 +187,10 @@ internal static class Logic
 
     internal static BitArray Key { get; private set; }
 
-    internal static byte[] InitialText { get; set; }
+    internal static BitArray InitialText { get; set; }
 
-    internal static byte[] ResultText { get; private set; }
+    internal static BitArray ResultTextBits { get; private set; }
+
+    internal static byte[] ResultTextBytes;
 }
 
