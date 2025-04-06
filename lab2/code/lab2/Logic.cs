@@ -9,8 +9,9 @@ internal static class Logic
 {
     private const byte BIT_IN_BYTE = 8;
     private const byte INT_OFFSET = 29;
-    private const byte BIT_35 = 29;
-    private const byte BIT_2 = 62;
+    private const byte TO_BIT_35 = 29;
+    private const byte TO_BIT_2 = 62;
+    private const byte TO_BIT_1 = 63;
 
     private static Task showPartBits(TextBox textBox, BitArray bits)
     {
@@ -116,13 +117,13 @@ internal static class Logic
 
         for (int i = 0; i < resultKey.Length; i++)
         {
-            shiftedBit = (register & (1UL << BIT_35)) != 0;
-            extraShiftedBit = (register & (1UL << BIT_2)) != 0;
+            shiftedBit = (register & (1UL << TO_BIT_35)) != 0;
+            extraShiftedBit = (register & (1UL << TO_BIT_2)) != 0;
 
             xorResult = shiftedBit ^ extraShiftedBit;
 
             register = register >> 1;
-            register |= xorResult ? (1UL << 63) : 0UL;
+            register |= xorResult ? (1UL << TO_BIT_1) : 0UL;
 
             resultKey[i] = shiftedBit;
         }
